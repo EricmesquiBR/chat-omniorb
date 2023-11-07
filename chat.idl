@@ -1,0 +1,11 @@
+// Chat.idl
+module ChatApp {
+  interface ChatServer {
+    void sendMessage(in string message, in string sender);
+    string receiveMessage();
+  };
+
+  interface ChatClient {
+    void receiveMessage(in string message, in string sender);
+  };
+};
