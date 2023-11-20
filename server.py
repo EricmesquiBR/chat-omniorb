@@ -1,33 +1,29 @@
-# chat_server.py
-import CORBA
-import ChatApp
+import sys
+import CORBA, ChatApp, ChatApp__POA
 
-class ChatServer_i(ChatApp.ChatServer):
+
+class ChatServer_i(ChatApp__POA.ChatServer):
     def __init__(self):
         self.clients = []
 
     def sendMessage(self, message, sender):
+        print(f"Received message from {sender}: {message}")
         for client in self.clients:
             client.receiveMessage(message, sender)
 
     def receiveMessage(self):
         # Implementation as needed
-        pass
+        return ""
 
-orb = CORBA.ORB_init(sys.argv, CORBA.ORB_ID)
+
+
+orb = CORBA.ORB_init(sys.argv)
 poa = orb.resolve_initial_references("RootPOA")
 
-server = ChatServer_i()
-poa.activate_object(server)
+servant = ChatServer_i()
+poa.activate_object(servant)
 
-# Obtain a reference to the server object
-obj = poa.id_to_reference(poa.servant_to_id(server))
+print(orb.object_to_string(servant._this()))
 
-# Export the server reference
-ior = orb.object_to_string(obj)
-
-# Print the IOR (Interoperable Object Reference) for clients to connect
-print("Chat Server IOR:", ior)
-
-# Run the ORB event loop
+poa._get_the_POAManager().activate()
 orb.run()
