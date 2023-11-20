@@ -1,7 +1,6 @@
 import sys
 import CORBA, ChatApp, ChatApp__POA
 
-
 class ChatServer_i(ChatApp__POA.ChatServer):
     def __init__(self):
         self.clients = []
