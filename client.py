@@ -8,6 +8,6 @@ ior = str(input())
 obj = orb.string_to_object(ior)
 server = obj._narrow(ChatApp.ChatServer)
 
-
+msg = input("Enter your message: ")
 # Send a message
-server.sendMessage("Hello, server!", "Client")
+server.sendMessage(msg, "Client")
