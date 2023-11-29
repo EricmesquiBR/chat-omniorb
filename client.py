@@ -5,20 +5,21 @@ import CORBA, ChatApp
 
 # function to receive the messages from the server
 def receive_messages():
-    last_received_message = None
+    ready_to_send = False
     while True:
-        messages = server.getMessages()
-        if messages:
-            newest_message = messages[-1]
-            if last_received_message != newest_message:
-                last_received_message = newest_message
-                print(newest_message)
+        messages = server.getNewMessages(name)
+        for message in messages:
+            print(message)
+            ready_to_send = False
+        if not ready_to_send:
+            print("Enter a message (or '-q' to quit): \n")
+            ready_to_send = True
 
 # function to send the messages to the server
 def send_messages():
     while True:
         # Send a message
-        message = input("Enter a message (or '-q' to quit): \n")
+        message = input()#"Enter a message (or '-q' to quit): \n")
         if message.lower() == '-q':
             server.quitChat(name)
             break
@@ -36,7 +37,7 @@ if __name__ == '__main__':
     server.joinChat(name)
     print(f"{name} has joined the chat")
 
-    # Start a thread to check for messages
+    # Start a thread to check for messages sending the client name
     threading.Thread(target=receive_messages, daemon=True).start()
 
     # Start a thread to send messages

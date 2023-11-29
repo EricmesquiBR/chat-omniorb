@@ -7,6 +7,7 @@
        string receiveMessage();
        void joinChat(in string name);
        void quitChat(in string name);
+       StringSeq getNewMessages(in string name);
        StringSeq getMessages();
      };
 

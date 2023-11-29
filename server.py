@@ -12,6 +12,8 @@ class ChatServer_i(ChatApp__POA.ChatServer):
     def __init__(self):
         self.clients = []
         self.messages = []
+        self.last_sent_messages = {}
+        self.last_received_messages = {}  # New dictionary to store last received messages
 
     def sendMessage(self, message, sender):
         timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -20,11 +22,20 @@ class ChatServer_i(ChatApp__POA.ChatServer):
         logging.info(log_message)  # Log the message
         print(log_message)
         for client in self.clients:
-            client.receiveMessage(message, sender)
+            self.last_sent_messages[client] = log_message
+            self.last_received_messages[client] = log_message  # Store the last received message for each client
 
-    def receiveMessage(self):
-        #for each new message its loaded this function is called to get the message on the client side
-        return "paia"
+    def getNewMessages(self, name):
+        new_messages = []
+        if name in self.last_sent_messages:
+            last_received_message = self.last_sent_messages[name]
+            if last_received_message != self.messages[-1]:
+                new_messages.append(self.messages[-1])
+                self.last_sent_messages[name] = self.messages[-1]
+        else:
+            new_messages = self.messages
+            self.last_sent_messages[name] = self.messages[-1] if self.messages else None
+        return new_messages
 
     def joinChat(self, name):
         timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -32,6 +43,7 @@ class ChatServer_i(ChatApp__POA.ChatServer):
         self.messages.append(join_message)
         logging.info(join_message)  # Log the join event
         print(join_message)
+        self.clients.append(name)
 
     def quitChat(self, name):
         timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -39,10 +51,10 @@ class ChatServer_i(ChatApp__POA.ChatServer):
         self.messages.append(quit_message)
         logging.info(quit_message)  # Log the quit event
         print(quit_message)
+        self.clients.remove(name)
 
     def getMessages(self):
         return self.messages
-
 
 
 
