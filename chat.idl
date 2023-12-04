@@ -1,11 +1,17 @@
-// Chat.idl
-module ChatApp {
-  interface ChatServer {
-    void sendMessage(in string message, in string sender);
-    string receiveMessage();
-  };
+   // Chat.idl
+   module ChatApp {
+     typedef sequence<string> StringSeq;
 
-  interface ChatClient {
-    void receiveMessage(in string message, in string sender);
-  };
-};
+     interface ChatServer {
+       void sendMessage(in string message, in string sender);
+       string receiveMessage();
+       void joinChat(in string name);
+       void quitChat(in string name);
+       StringSeq getNewMessages(in string name);
+       StringSeq getMessages();
+     };
+
+     interface ChatClient {
+       void receiveMessage(in string message, in string sender);
+     };
+   };
